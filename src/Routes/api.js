@@ -1,91 +1,80 @@
-const express = require("express")
-const { studentsList, createStudent, studentListById, updateStudent, deleteStudent } = require("../Controllers/StudentsController")
-//const {createStudent}=require("../")
 
+const express = require('express');
+const { createProduct, ProductList,ProductUpdate, ProductDelete,ProductDetails, ProductByBrand, ProductByCategory, ProductBySearch } = require('../controllers/ProductControler');
+const { UserOTP, VerifyOTPLogin, UserLogout, UpdateUser, ReadUser, SignUp } = require('../controllers/UserController');
+const { AuthVerification } = require('../middlewares/AuthVerification');
 
 const router = express.Router()
 
 
 
+//creating data
+router.post('/CreateProduct', createProduct)
 
 
-//create product
-router.post('/create-student',  async (req, res) => {
-    const postBody = req.body
-
-    const response = await createStudent(postBody)
-
-    if (response) {
-        res.status(200).json({ status: "success", message: "Student Profile created sucessfully." })
-    } else {
-        res.status(201).json({status: "fail", error: "Fail to create profile" })
-    }
-})
-
-//read product
-router.get('/student-list', async (req, res) => {
-    const response = await studentsList()
-
-    if (response.length !== 0) {
-        res.status(200).json({ status: "success", data: response })
-    } else {
-        res.status(201).json({ status: "fail",error: "Profilies are not avilable .." })
-
-    }
-})
-router.get('/student-list-one/:id', async (req, res) => {
-
-    const id = req.params.id
-    const response = await studentListById(id)
-
-    if (response) {
-        res.status(200).json({ status: "success", data: response })
-    } else {
-        res.status(201).json({status: "fail", error: "Student profile is not avilable .." })
-
-    }
-})
-
-//update product
-router.post('/update-student/:id', async (req, res) => {
-    const postBody = req.body
-    const id = req.params.id
-
-    const response = await updateStudent(id, postBody)
-
-    if (response) {
-        res.status(200).json({ status: "success", message: "Bio Updated sucessfully." })
-    } else {
-        res.status(201).json({status: "fail", error: "Bio update Failed.." })
-
-    }
-})
-
-//delete product
-router.get('/delete-student/:id', async (req, res) => {
-
-    const taskId = req.params.id
-
-    const response = await deleteStudent(taskId)
-    if (response) {
-        res.status(200).json({ status: "success", message: "Student deleted sucessfully." })
-    } else {
-        res.status(201).json({status: "fail", error: "Student delete Failed.." })
-    }
-})
+router.post('/ProductUpdate/:productId', ProductUpdate)
+router.post('/ProductDelete/:productId', ProductDelete)
 
 
-//404 page handling .....
+//getting data
+//router.get('/ProductList/:pageNo/:perPage/:searchKeyword', ProductList)
+router.get('/ProductList',AuthVerification, ProductList)
+router.get('/ProductDetails/:productId', AuthVerification,ProductDetails)
+router.get('/ProductByBrand/:brandName', AuthVerification,ProductByBrand)
+router.get('/ProductByCategory/:categoryName', AuthVerification,ProductByCategory)
+router.get('/ProductBySearch/:searchKeyWord', AuthVerification,ProductBySearch)
+
+ 
+//user apis 
+router.post('/SignUp', SignUp)
+
+router.post('/Login/:email/:password', UserOTP)
+router.post('/VerifyOtp/:email/:otp', VerifyOTPLogin)
+router.post('/Logout', AuthVerification,UserLogout)
+router.post('/UpdateUser', AuthVerification,UpdateUser) 
+router.get('/ReadUser',AuthVerification, ReadUser)
+
+ 
+ 
 
 
 
 
-
-router.use("*", (req, res) => {
-    res.status(201).json({ error: "404 error happed." })
-})
 
 module.exports = router;
+
+
+
+ 
+ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
